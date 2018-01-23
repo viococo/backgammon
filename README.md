@@ -3,23 +3,23 @@ Jeu de backgammon
 
 
 ___
-##Liste des entités
+## Liste des entités
 ___
 
-###PLATEAU
+### PLATEAU
 - flèches 6 x 2 x 2
 
-###JOUEUR
+### JOUEUR
 - sens
 - 15 pions
 - couleur
 - score
 
-###PIONS
+### PIONS
 - position (numéro flèche ?)
 - etat : barre / en cours / dernière case /
 - couleur / joueur
 
-###FLECHE
+### FLECHE
 - couleur
 - état : fermée / pas fermée

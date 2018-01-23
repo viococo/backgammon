@@ -1,2 +1,0 @@
-# backgammon
-jeu de backgammon

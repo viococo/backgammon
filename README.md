@@ -1,10 +1,8 @@
 # backgammon
 Jeu de backgammon
-
-
 ___
+
 ## Liste des entités
-___
 
 ### PLATEAU
 - flèches 6 x 2 x 2

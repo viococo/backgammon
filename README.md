@@ -4,20 +4,20 @@ ___
 
 ## Liste des entités
 
-### PLATEAU
+### PLATEAU - BOARD
 - flèches 6 x 2 x 2
 
-### JOUEUR
+### JOUEUR - PLAYER
 - sens
 - 15 pions
 - couleur
 - score
 
-### PIONS
+### PIONS - Checker
 - position (numéro flèche ?)
 - etat : barre / en cours / dernière case /
 - couleur / joueur
 
-### FLECHE
+### FLECHE - Points
 - couleur
 - état : fermée / pas fermée

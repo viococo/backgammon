@@ -17,6 +17,7 @@
             for ($i = 0; $i < $nb; $i++){
                 $dices[] = rand($min, $max);
             }
+            var_dump($this->name, $dices);
             return $dices;
         }
     }

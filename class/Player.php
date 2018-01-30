@@ -1,7 +1,7 @@
 <?php
     require_once('../tools/commons.php');
-    
-    Class Player 
+
+    Class Player
     {
         protected $name =  null;
         protected $color = null; // 1 ou 0 (W/B)
@@ -13,11 +13,15 @@
         }
 
         public function throw_dices($nb = 2){
-            $dices = [];            
+            $dices = [];
             for ($i = 0; $i < $nb; $i++){
                 $dices[] = rand($min, $max);
             }
             return $dices;
+        }
+
+        public function play(){
+            var_dump($name . ' commence à jouer.');
         }
     }
 ?>

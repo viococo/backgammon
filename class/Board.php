@@ -11,7 +11,11 @@
         }
 
         public function getMyCheckers($player) {
-            var_dump('Récupérer les jetons du joueur : ' . $player)
+            echo '<p>Récupérer les jetons du joueur : ' . $player->name. '</p>';
+
+            for ($i = 0; $i < count($this->points); $i++) {
+                var_dump($this->points[$i]);
+            }
         }
     }
 ?>

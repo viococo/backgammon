@@ -8,8 +8,4 @@ require_once('class/Points.php');
 $game = new Game ('Alice', 'Bob');
 $game->start();
 
-
-
-
-
 ?></pre>

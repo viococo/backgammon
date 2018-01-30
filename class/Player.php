@@ -11,6 +11,10 @@
             $this->color = $color;
         }
 
+        public function __get($elem) {
+            return $this->$elem;
+        }
+
         public function throw_dices($nb = 2){
             $dices = [];
             for ($i = 0; $i < $nb; $i++){
@@ -18,14 +22,6 @@
             }
             var_dump($this->name, $dices);
             return $dices;
-        }
-        
-        public function play(){
-            $name = $this->name;
-            var_dump($name . ' commence à jouer.');
-            var_dump('Liste des checkers de ' . $name . ' :');
-            $game = new Game();
-            $game->getMyCheckers();
         }
     }
 ?>

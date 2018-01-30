@@ -21,7 +21,11 @@
         }
 
         public function play(){
+            $name = $this->name;
             var_dump($name . ' commence à jouer.');
+            var_dump('Liste des checkers de ' . $name . ' :');
+            $game = new Game();
+            $game->getMyCheckers();
         }
     }
 ?>

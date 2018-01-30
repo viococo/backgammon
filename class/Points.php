@@ -1,5 +1,5 @@
 <?php
-    Class Points
+    Class Point
     {
         protected $name =  null;
         protected $pions = []; // liste de pions

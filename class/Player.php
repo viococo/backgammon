@@ -22,10 +22,18 @@
 
         public function throw_dices($nb = 2){
             $dices = [];
+
+            $pluriel = ($nb === 2) ? 's' : '';
+
+            echo '<p><i>' . $this->name . ' lance le'.$pluriel.' dés : </i>';
+
             for ($i = 0; $i < $nb; $i++){
                 $dices[] = rand(1, 6);
+                $space = ($i > 0) ? ' - ' : '';
+                echo '<strong>'.$space.$dices[$i].'</strong>';
             }
-            var_dump($this->name, $dices);
+
+            echo '</p>';
             $this->currentDices = $dices;
         }
 

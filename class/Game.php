@@ -12,6 +12,7 @@ class Game{
 
     public function start(){
         $this->board = new Board();
+        $this->board->drawBoard();
         $throw1 = 0;
         $throw2 = 0;
 
@@ -31,29 +32,36 @@ class Game{
     }
 
     public function play($player){
-        echo '<p>' . $player->name . ' commence à jouer.</p>';
-        echo '<p>' . $player->name . ' lance les dés :</p>';
-
+        $this->board->currentPlayer = $player;
+        echo '<p><strong class="player' . $player->color . '">' . $player->name . ' commence à jouer.</strong></p>';
         $player->throw_dices();
 
-        echo '<p>Tous les checkers :</p>';
+        echo '<p>Liste des coups possibles pour <strong>' . $player->name . '</strong> :</p>';
         $allCheckers = $this->board->getBoard();
 
-        $possibilities = $this->board->checkMyPossibilities($player);
-
-        var_dump($possibilities);
-
+        echo '<ul>';
+        $possibilities = $this->board->checkMyPossibilities();
+        echo '</ul>';
 
         // LE PLAYER FAIT SON CHOIX
         $myChoice = $possibilities[rand(0, count($possibilities) - 1)];
         $indexDice = $myChoice['indexDice'];
 
         $player->removeDice($indexDice);
+
+        $from = $myChoice['from'];
+        $to = $myChoice['to'];
+
+        echo '<p>Le joueur déplace from '.($from+1).' to '.($to+1).'</p>';
         if ($myChoice['toBar']) {
-            // TODO : déplacer l'adversaire dans la BAR
+            var_dump('go to bar !!');
+            $this->board->goToBar($to);
         }
 
-        $this->board->moveChecker($myChoice['from'], $myChoice['to']);
+        $this->board->moveChecker($from, $to);
+
+        $this->board->drawBoard();
+
 
         // if($myChoice['toBar'])
     }

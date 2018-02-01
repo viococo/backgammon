@@ -38,7 +38,17 @@
         }
 
         public function removeDice($indexDice) {
-            unset($this->currentDices[$indexDice]);
+            // On assigne le dès non-utilisé en premier
+            if ($indexDice === 1) {
+                $this->currentDices[0] = $this->currentDices[0];
+
+            } else {
+                $this->currentDices[0] = $this->currentDices[1];
+            }
+
+            // Et on supprime l'autre
+            unset($this->currentDices[1]);
+
         }
     }
 ?>

@@ -11,17 +11,33 @@
             // Stocker le contenu initial des 24 flèches
             $this->points = [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2];
             // $this->points = [2, 0, 0, 0, 0, -1, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, -2];
-            // $this->points = [2, 1, 1, 1, 1, -1, 1, -3, 1, 1, 1, 5, -5, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, -2];
+            // $this->points = [2, -1, -1, -1, -1, -1, -1, -3, -1, -1, -1, 5, -5, -1, -1, -1, 3, -1, -1, -1, -1, -1, -1, -2];
+        }
+
+        public function __get($elem) {
+            return $this->$elem;
         }
 
         public function drawBoard() {
             echo '<div class="board">';
+
+            $nbCheckers = 0;
+            $nbCheckersBlanc = 0;
+            $nbCheckersNoir = 0;
+
             foreach ($this->points as $indexPoint => $point) {
-                echo '<div class="point">';
+                echo '<div class="point"><span class="white">'. (24 - $indexPoint) . '</span><span class="black">' .($indexPoint + 1).'</span>';
 
                 for ($i = 0; $i < abs($point); $i++) {
                     $color = ($point > 0) ? 'white' : 'black';
                     echo '<div class="checker '.$color.'"></div>';
+                    $nbCheckers++;
+
+                    if($color === 'white') {
+                        $nbCheckersBlanc++;
+                    } else {
+                        $nbCheckersNoir++;
+                    }
                 }
 
                 echo '</div>';
@@ -39,6 +55,13 @@
 
                     for ($i=0; $i < $this->bar[$index]; $i++) {
                         echo '<div class="checker '.$color.'"></div>';
+                        $nbCheckers++;
+
+                        if($color === 'white') {
+                            $nbCheckersBlanc++;
+                        } else {
+                            $nbCheckersNoir++;
+                        }
                     }
 
                     echo '</div>';
@@ -50,34 +73,47 @@
 
             }
             echo '</div>';
+
+            if ($nbCheckersBlanc === 0) {
+                exit('<h1>Bob a gagné.</h1>');
+            } else if ($nbCheckersNoir === 0) {
+                exit('<h1>Alice a gagné.</h1>');
+            }
         }
 
         public function __set($elem, $value) {
             return $this->$elem = $value;
         }
 
-        public function getBoard() {
-            return $this->points;
-        }
-
-        public function showPossibilty($from, $to, $indexDice, $toBar = false) {
+        public function showPossibilty($from, $to, $indexDice, $status = false) {
 
             // On stock les déplacements possibles
             $this->allowedMoves[] = [
                 'from' => $from,
                 'to' => $to,
                 'indexDice' => $indexDice,
-                'toBar' => $toBar];
+                'status' => $status];
+
+
+             if(is_numeric($to)) {
+                $to++;
+             }
+
+             if(is_numeric($from)) {
+                $from++;
+             }
 
             // On affiche les choix possibles
-            echo '<li> from '.($from + 1).' to '. ($to + 1) . ($toBar ? ' (tu manges)' : ''). '</li>';
+            echo '<li> from '.$from.' to '. $to . '</li>';
         }
 
-        public function checkMyPossibilities() {
+        public function checkAllPossibilities() {
             $color = $this->currentPlayer->color;
             $dices = $this->currentPlayer->currentDices;
 
             $this->reverse_array();
+
+            echo '<ul>';
 
             // On parcourt tous les hommes du tableau
             for ($i = 0; $i < count($this->points); $i++) {
@@ -95,7 +131,7 @@
                         $targetPos = $i - $dices[$indexDice];
 
                         // Si la cible est dans le tableau
-                        if ($targetPos > 0) {
+                        if ($targetPos >= 0) {
 
                             // Homme cible
                             $targetCheckers = $this->points[$targetPos];
@@ -106,7 +142,75 @@
                                 $this->showPossibilty($i, $targetPos, $indexDice);
                             } else if (abs($targetCheckers) < 2) {
                                 // Sinon, si il appartient à l'adversaire (et qu'il est seul)
-                                $this->showPossibilty($i, $targetPos, $indexDice, true);
+                                $this->showPossibilty($i, $targetPos, $indexDice, 'bar');
+                            }
+                        }
+                    }
+                }
+            }
+
+            echo '</ul>';
+
+            $this->reverse_array();
+
+            return $this->allowedMoves;
+        }
+
+        public function checkBarPossibilities() {
+            $this->reverse_array();
+
+            $color = $this->currentPlayer->color;
+
+            foreach ($this->currentPlayer->currentDices as $indexDice => $dice) {
+                $targetPos = (24 - $dice);
+                $targetCheckers = $this->points[$targetPos];
+
+                // Si le(s) jeton(s) cible t'appartient
+                // Ou s'il n'y a pas personne sur la flèche
+                if ($targetCheckers > 0 && $color > 0 || $targetCheckers < 0 && $color < 0 || $targetCheckers === 0) {
+                    $this->showPossibilty('bar', $targetPos, $indexDice);
+                } else if (abs($targetCheckers) < 2) {
+                    // Sinon, si il appartient à l'adversaire (et qu'il est seul)
+                    $this->showPossibilty('bar', $targetPos, $indexDice, 'bar');
+                }
+            }
+
+            $this->reverse_array();
+
+            return $this->allowedMoves;
+        }
+
+        public function checkHomePossibilities() {
+            $this->reverse_array();
+            $color = $this->currentPlayer->color;
+
+            foreach ($this->currentPlayer->currentDices as $indexDice => $dice) {
+                // first index = 0
+                $dice = $dice - 1;
+
+                $targetCheckers = $this->points[$dice];
+
+                if ($targetCheckers > 0 && $color > 0 || $targetCheckers < 0 && $color < 0 || $targetCheckers) {
+                    $this->showPossibilty($dice, 'leave', $indexDice, 'leave');
+                } else if($targetCheckers === 0) {
+
+                    $findChecker = false;
+                    for ($i = $dice; $i < 6; $i++) {
+                        $checker = $this->points[$i];
+
+                        if ($checker > 0 && $color > 0 || $checker < 0 && $color < 0)  {
+                            $findChecker = true;
+                            break;
+                        }
+                    }
+
+                    if (!$findChecker) {
+                        for ($i = $dice; $i >= 0; $i--) {
+                            $checker = $this->points[$i];
+
+                            if ($checker > 0 && $color > 0 || $checker < 0 && $color < 0)  {
+                                $this->showPossibilty($i, 'leave', $indexDice, 'leave');
+                                break;
                             }
                         }
                     }
@@ -133,26 +237,62 @@
                 $this->bar[0] += 1; // on met un blanc à la barre
             }
 
-            $this->reverse_array();
+            echo '<p class="attention">Le joueur mange un pion advserse !</p>';
 
-            $this->points[$elemToBar] -= 1; // On retire le checker demandé
+            if ($this->currentPlayer->color > 0) {
+                // Si on est blanc on inverse le tableau
+                $this->points = array_reverse($this->points);
 
+                $this->points[$elemToBar] += 1; // On retire un point noir (-x + 1)
+            } else {
+                $this->points[$elemToBar] -= 1; // Sinon on retire un point blanc (x - 1)
+            }
+
+            // On remet le tableau dans le bon ordre si besoin
             $this->reverse_array();
         }
 
         public function moveChecker($from, $to) {
+
+            echo '<p>Le joueur déplace from '.($from+1).' to '.($to+1).'</p>';
+
             $this->reverse_array();
 
-            // Si on est blanc
-            if ($this->currentPlayer->color > 0) {
-                $this->points[$from] -= 1; // On retire le checker de son point de départ
-                $this->points[$to] += 1; // Et on l'ajoute à la flèche target
+            if($to === 'leave') {
+                // Si on est blanc
+                if ($this->currentPlayer->color > 0) {
+                    $this->points[$from] -= 1; // On retire le checker de son point de départ
+                } else {
+                    $this->points[$from] += 1; // On retire le checker de son point de départ
+                }
             } else {
-                $this->points[$from] += 1; // On retire le checker de son point de départ
-                $this->points[$to] -= 1; // Et on l'ajoute à la flèche target
+                if($from === 'bar') {
+                    // Si on est blanc
+                    if ($this->currentPlayer->color > 0) {
+                        $this->bar[0] -= 1; // on enlève un blanc à la barre
+                    } else {
+                        $this->bar[1] -= 1; // on enlève un noir à la barre
+                    }
+                } else {
+                    // Si on est blanc
+                    if ($this->currentPlayer->color > 0) {
+                        $this->points[$from] -= 1; // On retire le checker de son point de départ
+                    } else {
+                        $this->points[$from] += 1; // On retire le checker de son point de départ
+                    }
+                }
+
+                if ($this->currentPlayer->color > 0) {
+                    $this->points[$to] += 1; // Et on l'ajoute à la flèche target
+                } else {
+                    $this->points[$to] -= 1; // Et on l'ajoute à la flèche target
+                }
             }
 
+
+
             $this->reverse_array();
+
         }
 
     }

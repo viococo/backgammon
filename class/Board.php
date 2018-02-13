@@ -1,4 +1,6 @@
 <?php
+    namespace TPClass\backgammon;
+
     Class Board
     {
         protected $history = [];
@@ -10,8 +12,6 @@
         public function __construct() {
             // Stocker le contenu initial des 24 flèches
             $this->points = [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2];
-            // $this->points = [2, 0, 0, 0, 0, -1, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, -2];
-            // $this->points = [2, -1, -1, -1, -1, -1, -1, -3, -1, -1, -1, 5, -5, -1, -1, -1, 3, -1, -1, -1, -1, -1, -1, -2];
         }
 
         public function __get($elem) {
@@ -103,8 +103,36 @@
                 $from++;
              }
 
+             $currentDices = $this->currentPlayer->currentDices;
+
+             if (count($currentDices) === 1) {
+                 $dices = '<strong>' .$currentDices[0]. '</strong>';
+             } else {
+                 $dices = '<strong>' .$currentDices[0]. '</strong>-' .$currentDices[1]. '';
+
+                 if ($indexDice === 1) {
+                     $dices = '' .$currentDices[0]. '-<strong>' .$currentDices[1]. '</strong>';
+                 }
+             }
+
+
+
+
+             $color = $this->currentPlayer->color;
+
+             if ($color > 0) {
+                 $color = 'blanc';
+             } else {
+                 $color = 'noir';
+             }
+
+             $etoile = '';
+             if ($status === 'bar') {
+                 $etoile = '*';
+             }
+
             // On affiche les choix possibles
-            echo '<li> from '.$from.' to '. $to . '</li>';
+            echo '<li>'.$color.' '.$dices.' ' .$from.'/'. $to . ''.$etoile.'</li>';
         }
 
         public function checkAllPossibilities() {
@@ -254,8 +282,6 @@
 
         public function moveChecker($from, $to) {
 
-            echo '<p>Le joueur déplace from '.($from+1).' to '.($to+1).'</p>';
-
             $this->reverse_array();
 
             if($to === 'leave') {
@@ -292,6 +318,16 @@
 
 
             $this->reverse_array();
+
+            if(is_numeric($to)) {
+               $to++;
+            }
+
+            if(is_numeric($from)) {
+               $from++;
+            }
+
+            echo '<p>Le joueur se déplace from '.($from).' to '.($to).'</p>';
 
         }
 

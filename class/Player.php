@@ -1,5 +1,7 @@
 <?php
 
+namespace TPClass\backgammon;
+
     Class Player
     {
         protected $name =  null;

@@ -1,4 +1,5 @@
 <?php
+namespace TPClass\backgammon;
 
 class Game{
     protected $p1;
@@ -39,7 +40,7 @@ class Game{
         $this->currentTour++;
 
         $this->board->currentPlayer = $player;
-        echo '<h1>'.$this->currentTour.'</h1>';
+        echo '<h1>Tour n°'.$this->currentTour.'</h1>';
         echo '<p><strong class="player' . $player->color . '">' . $player->name . ' commence à jouer.</strong></p>';
         $player->throw_dices();
 
@@ -60,7 +61,7 @@ class Game{
         $player->removeDice($indexDice);
         $this->play();
 
-        if ($this->currentTour < 200) {
+        if ($this->currentTour < 20) {
             // Si on est blanc
             if ($player->color > 0) {
                 $this->beginTour($this->p1);

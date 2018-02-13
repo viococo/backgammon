@@ -1,5 +1,10 @@
 {
     "name": "viococo/backgammon",
     "description": "jeu de backgammon",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "TPClass\\backgammon\\\\": "class/"
+        }
+    }
 }
